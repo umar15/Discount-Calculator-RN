@@ -1,12 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, Button, StyleSheet } from "react-native";
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
 	const [originalPrice, setOriginalPrice] = useState("");
 	const [discoutPercentage, setDiscountPercentage] = useState("");
 	const [total, setTotal] = useState(0);
 	const [discount, setDiscount] = useState(0);
 	const [history, setHistory] = useState([]);
+
+	React.useLayoutEffect(() => {
+		navigation.setOptions({
+			headerRight: () => (
+				<Button
+					title="History"
+					onPress={() =>
+						navigation.navigate("History", {
+							history,
+						})
+					}
+				/>
+			),
+		});
+	}, [navigation, history]);
 
 	const priceHandler = (e) => {
 		e.preventDefault();
@@ -45,9 +60,13 @@ const HomeScreen = () => {
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.headerStyles}> Discount Calculator</Text>
+			<View style={styles.headerStyles}>
+				<Text style={{ fontSize: 20, fontWeight: "bold" }}>
+					Calculate Discount
+				</Text>
+			</View>
 			<TextInput
-				style={styles.inputStyles}
+				style={[styles.inputStyles, { marginTop: 20 }]}
 				value={originalPrice}
 				onChange={priceHandler}
 				placeholder="Original Price"
@@ -62,20 +81,13 @@ const HomeScreen = () => {
 				<Text style={styles.pricingStyles}>You save: {discount}$ </Text>
 				<Text style={styles.pricingStyles}>Final Price: {total}$</Text>
 			</View>
-			{originalPrice && discoutPercentage && (
-				<View style={styles.calculateStyles}>
-					<Button title="save" onPress={saveHandler} />
-				</View>
-			)}
-			{/* <View>
-				{history.map((hist) => (
-					<View>
-						<View>Original Price: {hist.originalPrice}$</View>
-						<View>Discount Percentage: {hist.discoutPercentage}%</View>
-						<View>Total: {hist.total}$</View>
+			<Text>
+				{originalPrice && discoutPercentage && (
+					<View style={styles.calculateStyles}>
+						<Button title="save" onPress={saveHandler} />
 					</View>
-				))}
-			</View> */}
+				)}
+			</Text>
 		</View>
 	);
 };
@@ -86,12 +98,8 @@ const styles = StyleSheet.create({
 	},
 	headerStyles: {
 		textAlign: "center",
-		backgroundColor: "#002240",
 		padding: 5,
-		fontSize: 20,
-		fontWeight: "bold",
-		marginTop: 0,
-		marginBottom: 40,
+		marginTop: 20,
 		color: "#fff",
 	},
 	inputStyles: {
